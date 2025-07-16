@@ -101,14 +101,15 @@ export default function GrainLanding() {
 
   return (
     <div
-      className={`min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-slate-950 dark:via-gray-900 dark:to-slate-950 text-gray-900 dark:text-white relative transition-colors duration-500 ${
+      className={`min-h-screen w-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-slate-950 dark:via-gray-900 dark:to-slate-950 text-gray-900 dark:text-white relative transition-colors duration-500 ${
         isHoveringDesignElement ? "cursor-crosshair" : "cursor-default"
       }`}
+      style={{ minHeight: '100vh', width: '100vw', margin: 0, padding: 0 }}
     >
       {/* Custom CSS for enhanced UX - simplified */}
       <style jsx global>{`
         ::selection {
-          background: ${isDarkMode ? "rgba(168, 85, 247, 0.3)" : "rgba(147, 51, 234, 0.2)"};
+          background: ${isDarkMode ? "rgba(127, 127, 127, 0.3)" : "rgba(127, 127, 127, 0.2)"};
           color: ${isDarkMode ? "#ffffff" : "#1f2937"};
         }
         
@@ -117,14 +118,14 @@ export default function GrainLanding() {
           width: 6px;
         }
         ::-webkit-scrollbar-track {
-          background: ${isDarkMode ? "rgba(15, 23, 42, 0.1)" : "rgba(243, 244, 246, 0.5)"};
+          background: ${isDarkMode ? "rgba(55, 65, 81, 0.1)" : "rgba(229, 231, 235, 0.5)"};
         }
         ::-webkit-scrollbar-thumb {
-          background: ${isDarkMode ? "rgba(168, 85, 247, 0.3)" : "rgba(147, 51, 234, 0.3)"};
+          background: ${isDarkMode ? "rgba(75, 85, 99, 0.6)" : "rgba(75, 85, 99, 0.4)"};
           border-radius: 3px;
         }
         ::-webkit-scrollbar-thumb:hover {
-          background: ${isDarkMode ? "rgba(168, 85, 247, 0.5)" : "rgba(147, 51, 234, 0.5)"};
+          background: ${isDarkMode ? "rgba(75, 85, 99, 0.8)" : "rgba(75, 85, 99, 0.6)"};
         }
 
         /* Breathing animation - simplified */
@@ -330,7 +331,7 @@ export default function GrainLanding() {
         </section>
 
         {/* Features Section - Artistic Approach */}
-        <section className="py-24 md:py-32 relative" aria-labelledby="features-heading">
+        <section className="py-24 md:py-32 pb-32 md:pb-40 relative" aria-labelledby="features-heading">
           <div className="max-w-6xl mx-auto px-8 md:px-12 lg:px-16">
             <div className="mb-20 md:mb-28 max-w-3xl">
               <h2
@@ -349,7 +350,7 @@ export default function GrainLanding() {
 
             <div className="relative">
               {/* Artistic Feature Display */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 md:gap-20 lg:gap-28">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 lg:gap-20">
                 <article className="relative">
                   <div className="absolute -top-5 md:-top-10 -left-5 md:-left-10 w-20 md:w-40 h-20 md:h-40 rounded-full bg-gradient-to-r from-gray-500/5 to-gray-600/5 dark:from-gray-500/10 dark:to-gray-600/10 blur-3xl" />
                   <div className="mb-8 md:mb-12 w-16 md:w-20 h-16 md:h-20 rounded-2xl md:rounded-3xl bg-gradient-to-r from-gray-500/5 to-gray-600/5 dark:from-gray-500/10 dark:to-gray-600/10 backdrop-blur-sm border border-gray-200 dark:border-white/10 flex items-center justify-center shadow-sm">
@@ -362,19 +363,6 @@ export default function GrainLanding() {
                     Paste links and get perfectly typed tables in minutes. No more manual data entry or complex scraping
                     scripts.
                   </p>
-                  <div className="grid grid-cols-3 gap-3 md:gap-4">
-                    <div className="h-16 md:h-36 rounded-xl md:rounded-2xl bg-gradient-to-br from-gray-500/8 to-slate-500/8 dark:from-gray-500/10 dark:to-gray-600/10 backdrop-blur-sm border border-gray-300 dark:border-gray-600 shadow-sm flex items-center justify-center group hover:scale-105 hover:-rotate-1 hover:shadow-lg transition-all duration-500">
-                      <div className="text-xs font-mono text-gray-500 group-hover:text-gray-600 transition-colors duration-300">
-                        URL
-                      </div>
-                    </div>
-                    <div className="h-16 md:h-36 rounded-xl md:rounded-2xl bg-gradient-to-br from-slate-500/8 to-gray-500/8 dark:from-gray-500/10 dark:to-gray-600/10 backdrop-blur-sm border border-gray-300 dark:border-gray-600 shadow-sm flex items-center justify-center group hover:scale-105 hover:shadow-lg transition-all duration-500 delay-75">
-                      <ArrowRight className="w-4 h-4 text-gray-500 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-300" />
-                    </div>
-                    <div className="h-16 md:h-36 rounded-xl md:rounded-2xl bg-gradient-to-br from-gray-500/8 to-slate-500/8 dark:from-gray-500/10 dark:to-gray-600/10 backdrop-blur-sm border border-gray-300 dark:border-gray-600 shadow-sm flex items-center justify-center group hover:scale-105 hover:rotate-1 hover:shadow-lg transition-all duration-500 delay-150">
-                      <Database className="w-6 h-6 text-gray-500 group-hover:text-gray-600 group-hover:scale-110 transition-all duration-300" />
-                    </div>
-                  </div>
                 </article>
 
                 <article className="relative">
@@ -389,16 +377,6 @@ export default function GrainLanding() {
                     Sources change? Tables refresh automatically. Keep your AI agents updated with the latest data
                     without manual intervention.
                   </p>
-                  <div className="grid grid-cols-2 gap-3 md:gap-4">
-                    <div className="h-24 md:h-36 rounded-xl md:rounded-2xl bg-gradient-to-br from-gray-500/8 to-slate-500/8 dark:from-gray-500/10 dark:to-gray-600/10 backdrop-blur-sm border border-gray-300 dark:border-gray-600 shadow-sm flex flex-col items-center justify-center gap-2 group hover:scale-105 hover:-rotate-1 hover:shadow-lg transition-all duration-500">
-                      <RefreshCw className="w-4 h-4 text-gray-500 group-hover:text-gray-600 group-hover:rotate-180 transition-all duration-500" />
-                      <div className="w-8 h-1 bg-gradient-to-r from-gray-400 to-slate-400 rounded-full group-hover:w-10 transition-all duration-300" />
-                    </div>
-                    <div className="h-24 md:h-36 rounded-xl md:rounded-2xl bg-gradient-to-br from-slate-500/8 to-gray-500/8 dark:from-gray-500/10 dark:to-gray-600/10 backdrop-blur-sm border border-gray-300 dark:border-gray-600 shadow-sm flex flex-col items-center justify-center gap-2 group hover:scale-105 hover:rotate-1 hover:shadow-lg transition-all duration-500 delay-75">
-                      <Database className="w-4 h-4 text-slate-500 group-hover:text-slate-600 group-hover:scale-110 transition-all duration-300" />
-                      <div className="w-6 h-1 bg-gradient-to-r from-slate-400 to-gray-400 rounded-full group-hover:w-8 transition-all duration-300" />
-                    </div>
-                  </div>
                 </article>
 
                 <article className="relative group">
@@ -413,36 +391,6 @@ export default function GrainLanding() {
                     Eliminate redundancy. Any future agent can query your data in milliseconds with our smart caching
                     layer.
                   </p>
-                  <div className="relative h-32 md:h-40 overflow-hidden rounded-xl md:rounded-2xl bg-gradient-to-b from-gray-500/8 via-slate-500/8 to-transparent dark:from-gray-500/10 dark:via-gray-600/10 dark:to-transparent backdrop-blur-sm border border-gray-300 dark:border-gray-600 shadow-sm">
-                    {/* Cloud visualization */}
-                    <div className="absolute inset-0 p-2 md:p-3">
-                      <div className="grid grid-cols-4 gap-1 md:gap-1.5 h-full">
-                        {/* Data nodes */}
-                        <div className="col-span-2 h-6 md:h-8 rounded bg-gray-400/60 group-hover:bg-gray-500/60 transition-colors duration-300" />
-                        <div className="col-span-1 h-6 md:h-8 rounded bg-slate-400/60 group-hover:bg-slate-500/60 transition-colors duration-300" />
-                        <div className="col-span-1 h-6 md:h-8 rounded bg-gray-400/60 group-hover:bg-gray-500/60 transition-colors duration-300" />
-
-                        <div className="col-span-1 h-6 md:h-8 rounded bg-slate-400/50 group-hover:bg-slate-500/50 transition-colors duration-300" />
-                        <div className="col-span-3 h-6 md:h-8 rounded bg-gray-400/50 group-hover:bg-gray-500/50 transition-colors duration-300" />
-
-                        <div className="col-span-3 h-6 md:h-8 rounded bg-gray-400/40 group-hover:bg-gray-500/40 transition-colors duration-300" />
-                        <div className="col-span-1 h-6 md:h-8 rounded bg-gray-400/40 group-hover:bg-gray-500/40 transition-colors duration-300" />
-
-                        <div className="col-span-2 h-6 md:h-8 rounded bg-slate-400/30 group-hover:bg-slate-500/30 transition-colors duration-300" />
-                        <div className="col-span-2 h-6 md:h-8 rounded bg-gray-400/30 group-hover:bg-gray-500/30 transition-colors duration-300" />
-
-                        <div className="col-span-1 h-4 md:h-6 rounded bg-gray-400/20 group-hover:bg-gray-500/20 transition-colors duration-300" />
-                        <div className="col-span-2 h-4 md:h-6 rounded bg-slate-400/20 group-hover:bg-slate-500/20 transition-colors duration-300" />
-                        <div className="col-span-1 h-4 md:h-6 rounded bg-gray-400/20 group-hover:bg-gray-500/20 transition-colors duration-300" />
-                      </div>
-                    </div>
-
-                    {/* Fade out gradient */}
-                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white dark:from-slate-950 to-transparent pointer-events-none" />
-
-                    {/* Hover effect overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-gray-500/5 to-slate-500/5 dark:from-gray-500/10 dark:to-gray-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  </div>
                 </article>
 
                 <article className="relative">
@@ -457,16 +405,6 @@ export default function GrainLanding() {
                     Need it in Excel? SQL? R? Python? You got it. Export to any format or integrate directly with your
                     existing tools.
                   </p>
-                  <div className="h-20 md:h-40 rounded-xl md:rounded-2xl bg-gradient-to-br from-gray-500/8 to-slate-500/8 dark:from-gray-500/10 dark:to-gray-600/10 backdrop-blur-sm border border-gray-300 dark:border-gray-600 shadow-sm flex items-center justify-center group hover:scale-105 hover:shadow-lg transition-all duration-500">
-                    <div className="flex items-center gap-3 group-hover:gap-4 transition-all duration-300">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-gray-400 to-slate-400 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <Download className="w-4 h-4 text-white group-hover:rotate-12 transition-transform duration-300" />
-                      </div>
-                      <div className="text-sm font-medium text-gray-600 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors duration-300">
-                        Export Anywhere
-                      </div>
-                    </div>
-                  </div>
                 </article>
               </div>
             </div>
@@ -480,13 +418,13 @@ export default function GrainLanding() {
         >
           {/* Final morphed circles - back to original state */}
           <div className="absolute inset-0 flex items-center justify-center -z-10">
-            <div className="w-[300px] md:w-[500px] lg:w-[600px] h-[300px] md:h-[500px] lg:h-[600px] rounded-full border border-gray-200 dark:border-white/10 subtle-breathe" />
+            <div className="w-[250px] md:w-[400px] lg:w-[500px] h-[250px] md:h-[400px] lg:h-[500px] rounded-full border border-gray-200 dark:border-white/10 subtle-breathe" />
             <div
-              className="w-[400px] md:w-[650px] lg:w-[800px] h-[400px] md:h-[650px] lg:h-[800px] rounded-full border border-gray-100 dark:border-white/5 absolute subtle-breathe"
+              className="w-[350px] md:w-[550px] lg:w-[700px] h-[350px] md:h-[550px] lg:h-[700px] rounded-full border border-gray-100 dark:border-white/5 absolute subtle-breathe"
               style={{ animationDelay: "1s" }}
             />
             <div
-              className="w-[500px] md:w-[800px] lg:w-[1000px] h-[500px] md:h-[800px] lg:h-[1000px] rounded-full border border-gray-300 dark:border-white/3 absolute subtle-breathe"
+              className="w-[450px] md:w-[700px] lg:w-[900px] h-[450px] md:h-[700px] lg:h-[900px] rounded-full border border-gray-300 dark:border-white/3 absolute subtle-breathe"
               style={{ animationDelay: "2s" }}
             />
           </div>

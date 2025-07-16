@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'Grain | Data: the way you need it',
+  description: 'The data layer for AI. Transform raw data into AI-ready context.',
   generator: 'v0.dev',
 }
 
