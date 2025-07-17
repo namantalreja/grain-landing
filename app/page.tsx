@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, Moon, Sun, Database, Zap, RefreshCw, Cloud, Download, Video, Bot } from "lucide-react"
+import { ArrowRight, Moon, Sun, Database, Zap, RefreshCw, Cloud, Download, Video, Bot, Mail, Check } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 
 export default function GrainLanding() {
@@ -10,15 +10,19 @@ export default function GrainLanding() {
   const [scrollY, setScrollY] = useState(0)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [isHoveringDesignElement, setIsHoveringDesignElement] = useState(false)
+  const [email, setEmail] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [submitMessage, setSubmitMessage] = useState("")
+  const [mounted, setMounted] = useState(false)
   const scrollRef = useRef<NodeJS.Timeout | null>(null)
   const mouseRef = useRef<NodeJS.Timeout | null>(null)
 
   // Check system preference on initial load
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
-      setIsDarkMode(prefersDark)
-    }
+    setMounted(true)
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+    setIsDarkMode(prefersDark)
   }, [])
 
   // Handle scroll for morphing animation with debounce
@@ -61,12 +65,79 @@ export default function GrainLanding() {
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode)
-    document.documentElement.classList.toggle("dark")
+    if (mounted) {
+      document.documentElement.classList.toggle("dark")
+    }
+  }
+
+  // Handle waitlist submission
+  const handleWaitlistSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email || isSubmitting) return
+
+    setIsSubmitting(true)
+    
+    try {
+      // Create a hidden form and submit it to Mailchimp via iframe
+      const form = document.createElement('form')
+      form.action = 'https://gmail.us9.list-manage.com/subscribe/post?u=348afc9a48688a3033efd0f17&id=dc3f234433&f_id=003358e1f0'
+      form.method = 'POST'
+      form.target = 'mailchimp-iframe'
+      form.style.display = 'none'
+
+      // Add email field
+      const emailField = document.createElement('input')
+      emailField.type = 'email'
+      emailField.name = 'EMAIL'
+      emailField.value = email
+      form.appendChild(emailField)
+
+      // Add bot prevention field
+      const botField = document.createElement('input')
+      botField.type = 'text'
+      botField.name = 'b_348afc9a48688a3033efd0f17_dc3f234433'
+      botField.value = ''
+      botField.style.position = 'absolute'
+      botField.style.left = '-5000px'
+      form.appendChild(botField)
+
+      // Create hidden iframe
+      const iframe = document.createElement('iframe')
+      iframe.name = 'mailchimp-iframe'
+      iframe.style.display = 'none'
+      document.body.appendChild(iframe)
+      document.body.appendChild(form)
+
+      // Submit form
+      form.submit()
+
+      // Clean up
+      setTimeout(() => {
+        document.body.removeChild(form)
+        document.body.removeChild(iframe)
+      }, 1000)
+      
+      // Show success message
+      setIsSubmitted(true)
+      setSubmitMessage("🎉 You're on the list! We'll notify you when Grain is ready.")
+      setEmail("")
+      
+      // Reset success message after 5 seconds
+      setTimeout(() => {
+        setIsSubmitted(false)
+        setSubmitMessage("")
+      }, 5000)
+    } catch (error) {
+      setSubmitMessage("Something went wrong. Please try again.")
+      setTimeout(() => setSubmitMessage(""), 3000)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   // Calculate morphing progress based on scroll - simplified
   const getShapeProgress = () => {
-    if (typeof window === "undefined") return { borderRadius: "50%", rotation: "0deg" }
+    if (!mounted) return { borderRadius: "50%", rotation: "0deg" }
 
     const windowHeight = window.innerHeight
     const totalScrollHeight = document.documentElement.scrollHeight - windowHeight
@@ -99,15 +170,28 @@ export default function GrainLanding() {
 
   const { borderRadius, rotation } = getShapeProgress()
 
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return null
+  }
+
   return (
     <div
-      className={`min-h-screen w-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-slate-950 dark:via-gray-900 dark:to-slate-950 text-gray-900 dark:text-white relative transition-colors duration-500 ${
+      className={`h-screen w-screen overflow-y-auto bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-slate-950 dark:via-gray-900 dark:to-slate-950 text-gray-900 dark:text-white relative transition-colors duration-500 ${
         isHoveringDesignElement ? "cursor-crosshair" : "cursor-default"
       }`}
       style={{ minHeight: '100vh', width: '100vw', margin: 0, padding: 0 }}
     >
       {/* Custom CSS for enhanced UX - simplified */}
       <style jsx global>{`
+        /* Ensure full screen coverage */
+        html, body {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          overflow-x: hidden;
+        }
+        
         ::selection {
           background: ${isDarkMode ? "rgba(127, 127, 127, 0.3)" : "rgba(127, 127, 127, 0.2)"};
           color: ${isDarkMode ? "#ffffff" : "#1f2937"};
@@ -175,43 +259,6 @@ export default function GrainLanding() {
                 {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </div>
             </Button>
-            <Button
-              variant="ghost"
-              className="text-sm md:text-lg font-light text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-white/5 transition-all duration-300 px-2 md:px-4"
-              onClick={() => {
-                const element = document.getElementById("showcase-heading")
-                if (element) {
-                  const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
-                  const offsetPosition = elementPosition - 100 // Scroll 100px higher
-                  window.scrollTo({
-                    top: offsetPosition,
-                    behavior: "smooth",
-                  })
-                }
-              }}
-            >
-              Demo
-            </Button>
-            <Button
-              variant="ghost"
-              className="text-sm md:text-lg font-light text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-white/5 transition-all duration-300 px-2 md:px-4"
-              onClick={() => {
-                const element = document.getElementById("features-heading")
-                if (element) {
-                  const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
-                  const offsetPosition = elementPosition - 100 // Scroll 100px higher
-                  window.scrollTo({
-                    top: offsetPosition,
-                    behavior: "smooth",
-                  })
-                }
-              }}
-            >
-              Superpowers
-            </Button>
-            <Button className="rounded-full bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-white/90 px-3 md:px-6 py-1.5 md:py-2 text-sm md:text-base hover:scale-105 transition-all duration-300 hover:shadow-lg">
-              Get Started
-            </Button>
           </div>
         </nav>
 
@@ -259,11 +306,56 @@ export default function GrainLanding() {
               The data layer for AI. Want your model to reason over 200 KPIs from 1500 websites? We make that seamless.
             </p>
 
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-600 to-gray-800 dark:from-gray-300 dark:to-gray-100 p-[1px] rounded-full group hover:scale-105 transition-all duration-300 hover:shadow-xl">
-              <Button className="rounded-full bg-white dark:bg-black text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-black/90 px-6 md:px-8 py-4 md:py-6 text-lg md:text-xl group">
-                Start Extracting Data
-                <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5 group-hover:translate-x-1 transition-transform duration-300" />
-              </Button>
+            {/* Waitlist Form */}
+            <div className="max-w-sm mx-auto">
+              {isSubmitted ? (
+                <div className="inline-flex items-center gap-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-full px-6 py-4 text-green-700 dark:text-green-300">
+                  <Check className="h-5 w-5" />
+                  <span className="text-sm font-medium">You're on the waitlist!</span>
+                </div>
+              ) : (
+                <form onSubmit={handleWaitlistSubmit} className="space-y-4">
+                  <div className="flex flex-col sm:flex-row gap-3 items-center">
+                    <div className="relative flex-1 w-full sm:w-auto">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email"
+                        className="w-full pl-9 pr-3 py-2.5 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition-all duration-300 text-sm"
+                        required
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting || !email}
+                      className="rounded-full bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-white/90 px-5 py-2.5 text-sm font-medium hover:scale-105 transition-all duration-300 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none w-full sm:w-auto"
+                    >
+                      {isSubmitting ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 border-2 border-white dark:border-black border-t-transparent rounded-full animate-spin" />
+                          Joining...
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          Join Waitlist
+                          <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform duration-300" />
+                        </div>
+                      )}
+                    </Button>
+                  </div>
+                  {submitMessage && (
+                    <p className={`text-sm text-center ${submitMessage.includes('wrong') ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
+                      {submitMessage}
+                    </p>
+                  )}
+                </form>
+              )}
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-3">
+                Be the first to know when Grain launches. No spam, ever.
+              </p>
             </div>
           </div>
         </section>
@@ -307,22 +399,16 @@ export default function GrainLanding() {
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-gray-500/5 to-slate-500/5 dark:from-gray-500/10 dark:to-gray-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                  {/* Video placeholder */}
-                  <div className="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center relative">
-                    <div className="text-center">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
-                        <Video className="w-8 h-8 text-gray-500 dark:text-gray-400" />
-                      </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Demo Video</p>
-                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">See Grain in action</p>
-                    </div>
-
-                    {/* Play button overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="w-20 h-20 rounded-full bg-white/90 dark:bg-black/90 flex items-center justify-center shadow-lg">
-                        <div className="w-0 h-0 border-l-[12px] border-l-gray-800 dark:border-l-white border-y-[8px] border-y-transparent ml-1"></div>
-                      </div>
-                    </div>
+                  {/* Demo Image */}
+                  <div className="w-full h-full relative overflow-hidden rounded-2xl md:rounded-3xl">
+                    <img
+                      src="/demo.png"
+                      alt="Grain Demo - Data extraction in action"
+                      className="w-full h-full object-cover object-top"
+                    />
+                    
+                    {/* Optional overlay for better text readability */}
+                    <div className="absolute inset-0 bg-black/10 dark:bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
                 </div>
               </div>
@@ -444,11 +530,56 @@ export default function GrainLanding() {
               Stop wrangling data manually. Let Grain transform your messy sources into AI-ready context.
             </p>
 
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-600 to-gray-800 dark:from-gray-300 dark:to-gray-100 p-[1px] rounded-full group hover:scale-105 transition-all duration-300 hover:shadow-xl">
-              <Button className="rounded-full bg-white dark:bg-black text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-black/90 px-8 md:px-12 py-6 md:py-8 text-base md:text-lg group">
-                Start Extracting
-                <ArrowRight className="ml-2 md:ml-3 h-5 w-5 md:h-6 md:w-6 group-hover:translate-x-1 transition-transform duration-300" />
-              </Button>
+            {/* Second Waitlist Form */}
+            <div className="max-w-sm mx-auto">
+              {isSubmitted ? (
+                <div className="inline-flex items-center gap-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-full px-6 py-3 text-green-700 dark:text-green-300">
+                  <Check className="h-5 w-5" />
+                  <span className="text-sm font-medium">Welcome to the Grain waitlist!</span>
+                </div>
+              ) : (
+                <form onSubmit={handleWaitlistSubmit} className="space-y-4">
+                  <div className="flex flex-col sm:flex-row gap-3 items-center">
+                    <div className="relative flex-1 w-full">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Your email address"
+                        className="w-full pl-9 pr-3 py-2.5 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition-all duration-300 text-sm"
+                        required
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting || !email}
+                      className="rounded-full bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-white/90 px-5 py-2.5 text-sm font-medium hover:scale-105 transition-all duration-300 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none w-full sm:w-auto"
+                    >
+                      {isSubmitting ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 border-2 border-white dark:border-black border-t-transparent rounded-full animate-spin" />
+                          Joining...
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          Get Early Access
+                          <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform duration-300" />
+                        </div>
+                      )}
+                    </Button>
+                  </div>
+                  {submitMessage && (
+                    <p className={`text-sm text-center ${submitMessage.includes('wrong') ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
+                      {submitMessage}
+                    </p>
+                  )}
+                </form>
+              )}
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-3">
+                Join other developers and AI teams waiting for early access.
+              </p>
             </div>
           </div>
         </section>
